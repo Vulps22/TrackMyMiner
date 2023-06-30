@@ -31,6 +31,9 @@ public final class TrackMyMiner extends JavaPlugin {
             }
         }
 
+        int notifyLevel = getConfig().getInt("level");
+        Bukkit.getLogger().info("[TrackMyMiner] Monitoring blocks below level " + notifyLevel);
+
         new BlockHandler(this);
         new LoginHandler(this);
 

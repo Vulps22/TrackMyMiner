@@ -1,4 +1,7 @@
-#Blocks:
+#set a level for monitoring to start. Players above this level will not trigger a notification
+#set this to 400 to monitor at all levels
+level: 32
+#List any block types in (block caps) that you want to monitor
 blocks:
   - DIAMOND_ORE
   - IRON_ORE
