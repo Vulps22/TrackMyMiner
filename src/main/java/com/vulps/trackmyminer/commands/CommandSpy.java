@@ -4,7 +4,6 @@ import com.vulps.trackmyminer.TrackMyMiner;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -19,20 +18,19 @@ public class CommandSpy implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
+    public boolean onCommand( CommandSender commandSender, Command command, String s, String[] strings) {
         if(commandSender instanceof Player){
             Player player = (Player) commandSender;
             if(!player.isOp()) return false;
 
-                for(String string : strings) {
+            for(String string : strings) {
                 if(string == "") return false;
             }
 
             plugin.setSpyOrigin(player);
 
-                Player target = Bukkit.getPlayer(strings[0]);
-                Location targetLocation = target.getLocation();
-
+            Player target = Bukkit.getPlayer(strings[0]);
+            Location targetLocation = target.getLocation();
 
             player.setGameMode(GameMode.SPECTATOR);
             player.teleport(targetLocation);

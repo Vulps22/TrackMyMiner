@@ -4,7 +4,6 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -16,7 +15,7 @@ public class PlayerMiningRecord {
     public Long lastMined;
     public Location lastLocation;//player location
     public int veins;
-    public Material lastBlock;
+    public Material lastBlock; //we use Material because Block changes when the referenced block updates
 
     public PlayerMiningRecord(Player player, Block block, Location location, TrackMyMiner plugin){
         this.plugin = plugin;
@@ -39,29 +38,22 @@ public class PlayerMiningRecord {
 
         if(passedTime < 600000) { //less than 10 minutes has passed
             if (passedTime > 10000){
-                Bukkit.getLogger().info("10 seconds has passed - New Vein");
                 lastBlock = block.getType();
                 this.lastMined = System.currentTimeMillis();
                 this.lastLocation = location;
                 newVein(true); //more than 10 seconds has passed, this is a new vein
             } else if(lastBlock != block.getType()){
-                Bukkit.getLogger().info("different block - New Vein");
-                Bukkit.getLogger().info(block.getType().name());
-                Bukkit.getLogger().info(lastBlock.name());
                 lastBlock = block.getType();
                 this.lastMined = System.currentTimeMillis();
                 this.lastLocation = location;
                 newVein(true); //a different block means a different vein
             }else { //not a new vein but still keeping track
-                Bukkit.getLogger().info("Not A New Vein");
-
                 this.lastBlock = block.getType();
                 this.lastMined = System.currentTimeMillis();
                 this.lastLocation = location;
             }
             
         } else{ //10 minutes has passed. Reset the record
-            Bukkit.getLogger().info("10 minutes has passed - RESET");
             this.veins = 1;
             this.lastMined = System.currentTimeMillis();
             this.lastLocation = location;

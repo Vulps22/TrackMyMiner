@@ -114,7 +114,6 @@ public final class TrackMyMiner extends JavaPlugin {
         }
     }
 
-
     public SpyOrigin getSpyOrigin(Player player){
         if(spyOrigin.containsKey(player)) return spyOrigin.get(player);
         else return null;
