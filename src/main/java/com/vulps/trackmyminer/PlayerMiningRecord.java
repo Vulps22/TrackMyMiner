@@ -10,7 +10,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 public class PlayerMiningRecord {
-    private TrackMyMiner plugin;
+    private final TrackMyMiner plugin;
     public Player player;
     public Long lastMined;
     public Location lastLocation;//player location
@@ -26,9 +26,6 @@ public class PlayerMiningRecord {
         this.lastBlock = block.getType();
     }
 
-    public Player getPlayer() {
-        return player;
-    }
     public void recordMined(Block block, Location location){
 
         lastLocation = location;
@@ -41,12 +38,12 @@ public class PlayerMiningRecord {
                 lastBlock = block.getType();
                 this.lastMined = System.currentTimeMillis();
                 this.lastLocation = location;
-                newVein(true); //more than 10 seconds has passed, this is a new vein
+                newVein(); //more than 10 seconds has passed, this is a new vein
             } else if(lastBlock != block.getType()){
                 lastBlock = block.getType();
                 this.lastMined = System.currentTimeMillis();
                 this.lastLocation = location;
-                newVein(true); //a different block means a different vein
+                newVein(); //a different block means a different vein
             }else { //not a new vein but still keeping track
                 this.lastBlock = block.getType();
                 this.lastMined = System.currentTimeMillis();
@@ -62,9 +59,9 @@ public class PlayerMiningRecord {
 
     }
 
-    private void newVein(Boolean shouldNotify){
+    private void newVein(){
         veins++;
-        if(shouldNotify && veins > 2) sendNotify(); // more than 2 veins in less than 10 minutes? sounds suss
+        if(veins > 2) sendNotify(); // more than 2 veins in less than 10 minutes? sounds suss
     }
 
     private void sendNotify(){

@@ -24,12 +24,16 @@ public class CommandSpy implements CommandExecutor {
             if(!player.isOp()) return false;
 
             for(String string : strings) {
-                if(string == "") return false;
+                if(string.equals("")) return false;
             }
 
             plugin.setSpyOrigin(player);
 
             Player target = Bukkit.getPlayer(strings[0]);
+            if(target == null){
+                player.sendMessage(target.getName() + " could not be located.");
+                return false;
+            }
             Location targetLocation = target.getLocation();
 
             player.setGameMode(GameMode.SPECTATOR);

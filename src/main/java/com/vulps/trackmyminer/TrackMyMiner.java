@@ -15,7 +15,7 @@ import java.util.*;
 
 public final class TrackMyMiner extends JavaPlugin {
     private final HashMap<Player, PlayerMiningRecord> lastMinedRecord = new HashMap<>();
-    private Map<Player, SpyOrigin> spyOrigin = new HashMap<>();
+    private final Map<Player, SpyOrigin> spyOrigin = new HashMap<>();
 
 
     @Override
@@ -78,13 +78,12 @@ public final class TrackMyMiner extends JavaPlugin {
         return true;
     }
 
-    public boolean sendNotifyMessage(BaseComponent[] message, String permission){
+    public void sendNotifyMessage(BaseComponent[] message, String permission){
         for(Player player : Bukkit.getOnlinePlayers()) {
             if(player.isOp() || player.hasPermission(permission)){
                 player.spigot().sendMessage(message);
             }
         }
-        return true;
     }
 
     public void setMined(Player player, Location location, Block block) {
@@ -98,7 +97,7 @@ public final class TrackMyMiner extends JavaPlugin {
         }
     }
     public void removeMiningRecord(Player player){
-        if(lastMinedRecord.containsKey(player)) lastMinedRecord.remove(player);
+        lastMinedRecord.remove(player);
     }
 
     public void setSpyOrigin(Player player) {
@@ -115,8 +114,7 @@ public final class TrackMyMiner extends JavaPlugin {
     }
 
     public SpyOrigin getSpyOrigin(Player player){
-        if(spyOrigin.containsKey(player)) return spyOrigin.get(player);
-        else return null;
+        return spyOrigin.getOrDefault(player, null);
     }
 
     public void cleanSpyOrigin(Player player){
@@ -128,7 +126,7 @@ public final class TrackMyMiner extends JavaPlugin {
     }
 
     public void removeOrigin(Player player){
-        if(spyOrigin.containsKey(player)) spyOrigin.remove(player);
+        spyOrigin.remove(player);
     }
 
 
