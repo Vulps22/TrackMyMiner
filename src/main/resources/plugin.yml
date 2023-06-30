@@ -3,3 +3,12 @@ version: '${project.version}'
 main: com.vulps.trackmyminer.TrackMyMiner
 api-version: '1.20'
 load: STARTUP
+commands:
+  mspy:
+    description: Your description
+    usage: /<command> <world> <x> <y> <z>
+    permission: miner.spy
+  mBack:
+    description: Your description
+    usage: /<command>
+    permission: miner.spy
