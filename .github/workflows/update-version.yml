@@ -23,7 +23,7 @@ jobs:
       # replace version.txt with the version used in the POM file
       - name: Update Version File
         run: |
-          mvn help:evaluate -Dexpression=project.version -q -DforceStdout > version.txt 
+          mvn help:evaluate -Dexpression=project.version -q -DforceStdout > src/main/resources/version.txt 
       - name: Commit and Push Changes
         run: |
           git config --local user.email "ajmcallister5@gmail.com"
