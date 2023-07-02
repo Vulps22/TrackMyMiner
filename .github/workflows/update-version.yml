@@ -27,7 +27,7 @@ jobs:
       - name: Commit and Push Changes
         run: |
           git config --local user.email "ajmcallister5@gmail.com"
-          git config --local user.name "${{ env.CI_COMMIT_AUTHOR }}"
+          git config --local user.name "ACTIONS"
           git add version.txt
           git commit -m "Update version.txt"
           git push
