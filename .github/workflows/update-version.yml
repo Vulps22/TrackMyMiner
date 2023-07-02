@@ -26,8 +26,8 @@ jobs:
           mvn help:evaluate -Dexpression=project.version -q -DforceStdout > version.txt 
       - name: Commit and Push Changes
         run: |
-          git config --local user.email "actions@github.com"
-          git config --local user.name "GitHub Actions"
+          git config --local user.email "ajmcallister5@gmail.com"
+          git config --local user.name "${{ env.CI_COMMIT_AUTHOR }}"
           git add version.txt
           git commit -m "Update version.txt"
           git push
