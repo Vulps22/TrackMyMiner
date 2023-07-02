@@ -16,29 +16,46 @@ import java.util.*;
 public final class TrackMyMiner extends JavaPlugin {
     private final HashMap<Player, PlayerMiningRecord> lastMinedRecord = new HashMap<>();
     private final Map<Player, SpyOrigin> spyOrigin = new HashMap<>();
-
+    public static String version;
+    public Boolean shouldUpdate = false;
 
     @Override
     public void onEnable() {
-        // Plugin startup logic
+        log("===================== [TrackMyMiner] =====================");
+
+        //check for updates
+        try {
+            version = Updater.getVersion();
+            shouldUpdate = Updater.shouldUpdate();
+            if(shouldUpdate)log("A new update is available");
+            else log("I am up-to-date (v" + version + ")");
+        }catch(Exception e){
+           warn("UPDATE CHECKER FAILED: Unable to retrieve latest version");
+            warn(e.getMessage());
+        }
+
+
+        // Plugin startup login
         saveDefaultConfig();
 
         List<String> blocks = getConfig().getStringList("blocks");
         if(!blocks.isEmpty()){
-            Bukkit.getLogger().info("[TrackMyMiner] Adding Blocks to Monitor");
+           log("Adding Blocks to Monitor");
             for(String block : blocks){
-                Bukkit.getLogger().info("[TrackMyMiner] " + block);
+                log(block);
             }
         }
 
         int notifyLevel = getConfig().getInt("level");
-        Bukkit.getLogger().info("[TrackMyMiner] Monitoring blocks below level " + notifyLevel);
+        log("Monitoring blocks below level " + notifyLevel);
 
         new BlockHandler(this);
         new LoginHandler(this);
 
         this.getCommand("mspy").setExecutor( new CommandSpy(this));
         this.getCommand("mBack").setExecutor(new CommandBack(this));
+
+        log("==========================================================");
     }
 
     @Override
@@ -48,6 +65,16 @@ public final class TrackMyMiner extends JavaPlugin {
         for (Player player : players) {
             cleanSpyOrigin(player);
         }
+    }
+
+    public static void log(String message){
+        if(message.equals("")) return;
+        Bukkit.getLogger().info("[TrackMyMiner] " + message);
+    }
+
+    public static void warn(String message){
+        if(message.equals("")) return;
+        Bukkit.getLogger().warning("[TrackMyMiner] " + message);
     }
 
     public boolean sendMessage(String message){
