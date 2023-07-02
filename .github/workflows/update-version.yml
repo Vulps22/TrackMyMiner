@@ -17,7 +17,7 @@ jobs:
       - name: Set up Java
         uses: actions/setup-java@v2
         with:
-          java-version: 1.17  # Replace with your desired Java version
+          java-version: 17  # Replace with your desired Java version
           distribution: 'adopt'
 
       # replace version.txt with the version used in the POM file
