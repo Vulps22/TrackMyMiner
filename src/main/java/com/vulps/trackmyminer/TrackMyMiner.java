@@ -1,6 +1,7 @@
 package com.vulps.trackmyminer;
 
 import com.vulps.trackmyminer.commands.CommandBack;
+import com.vulps.trackmyminer.commands.CommandSee;
 import com.vulps.trackmyminer.commands.CommandSpy;
 import com.vulps.trackmyminer.handlers.BlockHandler;
 import com.vulps.trackmyminer.handlers.LoginHandler;
@@ -55,7 +56,8 @@ public final class TrackMyMiner extends JavaPlugin {
         new LoginHandler(this);
 
         this.getCommand("mspy").setExecutor( new CommandSpy(this));
-        this.getCommand("mBack").setExecutor(new CommandBack(this));
+        this.getCommand("mback").setExecutor(new CommandBack(this));
+        this.getCommand("msee").setExecutor(new CommandSee(this));
 
         log("==========================================================");
     }
