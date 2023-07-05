@@ -34,6 +34,8 @@ public final class TrackMyMiner extends JavaPlugin {
             warn(e.getMessage());
         }
 
+        Metrics metrics = new Metrics(this, 18987);
+
 
         // Plugin startup login
         saveDefaultConfig();
