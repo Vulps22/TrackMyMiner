@@ -129,15 +129,16 @@ public final class TrackMyMiner extends JavaPlugin {
         lastMinedRecord.remove(player);
     }
 
-    public void setSpyOrigin(Player player) {
+    public void setSpyOrigin(Player player, Player target) {
         Location location = player.getLocation();
 
         // Check if the player already exists in the spyOrigin map
         if (spyOrigin.containsKey(player)) {
             SpyOrigin origin = spyOrigin.get(player);
             origin.setOrigin(location);
+            origin.setTarget(target);
         } else {
-            SpyOrigin origin = new SpyOrigin(player.getGameMode(), location);
+            SpyOrigin origin = new SpyOrigin(player.getGameMode(), location, target);
             spyOrigin.put(player, origin);
         }
     }
@@ -157,6 +158,6 @@ public final class TrackMyMiner extends JavaPlugin {
     public void removeOrigin(Player player){
         spyOrigin.remove(player);
     }
-
+    public Boolean isSpying(Player player){ return spyOrigin.containsKey(player);}
 
 }
