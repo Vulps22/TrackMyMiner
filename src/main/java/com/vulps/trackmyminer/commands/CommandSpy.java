@@ -27,7 +27,7 @@ public class CommandSpy implements CommandExecutor {
                 if(string.equals("")) return false;
             }
 
-            plugin.setSpyOrigin(player);
+
 
             Player target = Bukkit.getPlayer(strings[0]);
             if(target == null){
@@ -35,7 +35,7 @@ public class CommandSpy implements CommandExecutor {
                 return false;
             }
             Location targetLocation = target.getLocation();
-
+            plugin.setSpyOrigin(player, target);
             player.setGameMode(GameMode.SPECTATOR);
             player.teleport(targetLocation);
             return true;
