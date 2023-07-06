@@ -12,3 +12,7 @@ commands:
     description: Your description
     usage: /<command>
     permission: miner.spy
+  msee:
+    description: Your description
+    usage: /<command> <name>
+    permission: miner.see

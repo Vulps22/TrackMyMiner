@@ -1,6 +1,7 @@
 package com.vulps.trackmyminer;
 
 import com.vulps.trackmyminer.commands.CommandBack;
+import com.vulps.trackmyminer.commands.CommandSee;
 import com.vulps.trackmyminer.commands.CommandSpy;
 import com.vulps.trackmyminer.handlers.BlockHandler;
 import com.vulps.trackmyminer.handlers.LoginHandler;
@@ -34,6 +35,8 @@ public final class TrackMyMiner extends JavaPlugin {
             warn(e.getMessage());
         }
 
+        Metrics metrics = new Metrics(this, 18987);
+
 
         // Plugin startup login
         saveDefaultConfig();
@@ -53,7 +56,8 @@ public final class TrackMyMiner extends JavaPlugin {
         new LoginHandler(this);
 
         this.getCommand("mspy").setExecutor( new CommandSpy(this));
-        this.getCommand("mBack").setExecutor(new CommandBack(this));
+        this.getCommand("mback").setExecutor(new CommandBack(this));
+        this.getCommand("msee").setExecutor(new CommandSee(this));
 
         log("==========================================================");
     }
@@ -127,15 +131,16 @@ public final class TrackMyMiner extends JavaPlugin {
         lastMinedRecord.remove(player);
     }
 
-    public void setSpyOrigin(Player player) {
+    public void setSpyOrigin(Player player, Player target) {
         Location location = player.getLocation();
 
         // Check if the player already exists in the spyOrigin map
         if (spyOrigin.containsKey(player)) {
             SpyOrigin origin = spyOrigin.get(player);
             origin.setOrigin(location);
+            origin.setTarget(target);
         } else {
-            SpyOrigin origin = new SpyOrigin(player.getGameMode(), location);
+            SpyOrigin origin = new SpyOrigin(player.getGameMode(), location, target);
             spyOrigin.put(player, origin);
         }
     }
@@ -155,6 +160,6 @@ public final class TrackMyMiner extends JavaPlugin {
     public void removeOrigin(Player player){
         spyOrigin.remove(player);
     }
-
+    public Boolean isSpying(Player player){ return spyOrigin.containsKey(player);}
 
 }
