@@ -4,46 +4,151 @@ import com.vulps.trackmyminer.commands.CommandBack;
 import com.vulps.trackmyminer.commands.CommandSee;
 import com.vulps.trackmyminer.commands.CommandSpy;
 import com.vulps.trackmyminer.handlers.BlockHandler;
+import com.vulps.trackmyminer.handlers.ItemMoveHandler;
 import com.vulps.trackmyminer.handlers.LoginHandler;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
 public final class TrackMyMiner extends JavaPlugin {
     private final HashMap<Player, PlayerMiningRecord> lastMinedRecord = new HashMap<>();
     private final Map<Player, SpyOrigin> spyOrigin = new HashMap<>();
     public static String version;
-    public Boolean shouldUpdate = false;
 
     @Override
     public void onEnable() {
         log("===================== [TrackMyMiner] =====================");
 
+        Metrics metrics = new Metrics(this, 18987);
+        updateConfig();
+        checkForUpdates();
+        registerCommands();
+        registerHandlers();
+        logConfig();
+
+        log("==========================================================");
+    }
+
+    private boolean checkForUpdates() {
+        if(!getConfig().getBoolean("checkForUpdates")) return false;
         //check for updates
         try {
             version = Updater.getVersion();
-            shouldUpdate = Updater.shouldUpdate();
-            if(shouldUpdate)log("A new update is available");
-            else log("I am up-to-date (v" + version + ")");
+           Boolean shouldUpdate = Updater.shouldUpdate();
+            if(shouldUpdate){
+                log("A new update is available");
+                return true;
+            } else {
+                log("I am up-to-date (v" + version + ")");
+                return false;
+            }
         }catch(Exception e){
            warn("UPDATE CHECKER FAILED: Unable to retrieve latest version");
             warn(e.getMessage());
+            return false;
+        }
+    }
+
+    private void updateConfig() {
+        FileConfiguration config = getConfig();
+        Boolean updated = false;
+
+        // Check and update each config key
+        if (!config.isSet("checkForUpdates")) {
+            // Key not found, add default value from config.yml
+            config.set("checkForUpdates", true);
+            updated = true;
         }
 
-        Metrics metrics = new Metrics(this, 18987);
+        if (!config.isSet("level")) {
+            // Key not found, add default value from config.yml
+            config.set("level", 32);
+            updated = true;
 
+        }
 
-        // Plugin startup login
-        saveDefaultConfig();
+        if (!config.isSet("blocks")) {
+            // Key not found, add default value from config.yml
+            config.set("blocks", getDefaultBlockList());
+            updated = true;
 
+        }
+
+        // Save the updated config if any changes were made
+        if (updated) {
+            saveConfigWithComments();
+            log("config.yml has been updated");
+        }
+    }
+
+    private List<String> getDefaultBlockList() {
+        List<String> defaultBlocks = new ArrayList<>();
+        defaultBlocks.add("DIAMOND_ORE");
+        defaultBlocks.add("IRON_ORE");
+        defaultBlocks.add("GOLD_ORE");
+        return defaultBlocks;
+    }
+
+    private void saveConfigWithComments() {
+        File configFile = new File(getDataFolder(), "config.yml");
+        FileConfiguration config = getConfig();
+
+        try (
+            BufferedWriter writer = new BufferedWriter(new FileWriter(configFile))) {
+            writer.write("# Run the update checker when the server starts and when players with the miner.update permission login");
+            writer.newLine();
+            writer.write("checkForUpdates: " + config.get("checkForUpdates"));
+            writer.newLine();
+            writer.newLine();
+            writer.write("# Set a level for monitoring to start. Players above this level will not trigger a notification");
+            writer.newLine();
+            writer.write("# Set this to 400 to monitor at all levels");
+            writer.newLine();
+            writer.write("level: " + config.get("level"));
+            writer.newLine();
+            writer.newLine();
+            writer.write("# List any block types in (block caps) that you want to monitor");
+            writer.newLine();
+            writer.write("blocks:");
+            writer.newLine();
+            List<String> blocks = config.getStringList("blocks");
+            for (String block : blocks) {
+                writer.write("  - " + block);
+                writer.newLine();
+            }
+            writer.flush(); //write to file
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void registerCommands() {
+        this.getCommand("mspy").setExecutor( new CommandSpy(this));
+        this.getCommand("mback").setExecutor(new CommandBack(this));
+        this.getCommand("msee").setExecutor(new CommandSee(this));
+    }
+
+    private void registerHandlers(){
+        new BlockHandler(this);
+        new LoginHandler(this);
+        new ItemMoveHandler(this);
+    }
+
+    private void logConfig(){
         List<String> blocks = getConfig().getStringList("blocks");
         if(!blocks.isEmpty()){
-           log("Adding Blocks to Monitor");
+            log("Adding Blocks to Monitor");
             for(String block : blocks){
                 log(block);
             }
@@ -52,16 +157,7 @@ public final class TrackMyMiner extends JavaPlugin {
         int notifyLevel = getConfig().getInt("level");
         log("Monitoring blocks below level " + notifyLevel);
 
-        new BlockHandler(this);
-        new LoginHandler(this);
-
-        this.getCommand("mspy").setExecutor( new CommandSpy(this));
-        this.getCommand("mback").setExecutor(new CommandBack(this));
-        this.getCommand("msee").setExecutor(new CommandSee(this));
-
-        log("==========================================================");
     }
-
     @Override
     public void onDisable() {
         // reset all player positions if they are spying
