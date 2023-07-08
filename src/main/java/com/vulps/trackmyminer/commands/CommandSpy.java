@@ -28,6 +28,8 @@ public class CommandSpy implements CommandExecutor {
 
         if (!player.hasPermission("miner.spy")) return true;
 
+        if (args.length == 0) return true;
+
         for (String arg : args) {
             if (arg.isEmpty()) return true;
         }
