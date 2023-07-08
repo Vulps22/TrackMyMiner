@@ -11,20 +11,19 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 public class LoginHandler implements Listener {
 
-    TrackMyMiner plugin;
+    private final TrackMyMiner plugin;
+
     public LoginHandler(TrackMyMiner plugin){
         this.plugin = plugin;
         Bukkit.getPluginManager().registerEvents(this, plugin);
-
     }
 
     @EventHandler
-    public void onPlayerLogout(PlayerQuitEvent event){
+    public void onPlayerLogout(PlayerQuitEvent event) {
         Player player = event.getPlayer();
 
         //remove player from SpyOrigin if they exist and reset them
         plugin.cleanSpyOrigin(player);
-
         plugin.removeMiningRecord(player);
 
     }

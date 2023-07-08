@@ -22,7 +22,7 @@ public class PlayerMiningRecord {
         this.player = player;
         this.veins = 1;
         this.lastMined = System.currentTimeMillis();
-        this.lastLocation = location;//player location
+        this.lastLocation = location; //player location
         this.lastBlock = block.getType();
     }
 
@@ -30,27 +30,27 @@ public class PlayerMiningRecord {
 
         lastLocation = location;
 
-        Long currentTime = System.currentTimeMillis();
+        long currentTime = System.currentTimeMillis();
         long passedTime = currentTime - lastMined;
 
-        if(passedTime < 600000) { //less than 10 minutes has passed
+        if (passedTime < 600000) { //less than 10 minutes has passed
             if (passedTime > 10000){
                 lastBlock = block.getType();
                 this.lastMined = System.currentTimeMillis();
                 this.lastLocation = location;
                 newVein(); //more than 10 seconds has passed, this is a new vein
-            } else if(lastBlock != block.getType()){
+            } else if (lastBlock != block.getType()){
                 lastBlock = block.getType();
                 this.lastMined = System.currentTimeMillis();
                 this.lastLocation = location;
                 newVein(); //a different block means a different vein
-            }else { //not a new vein but still keeping track
+            } else { //not a new vein but still keeping track
                 this.lastBlock = block.getType();
                 this.lastMined = System.currentTimeMillis();
                 this.lastLocation = location;
             }
             
-        } else{ //10 minutes has passed. Reset the record
+        } else { //10 minutes has passed. Reset the record
             this.veins = 1;
             this.lastMined = System.currentTimeMillis();
             this.lastLocation = location;
@@ -59,12 +59,12 @@ public class PlayerMiningRecord {
 
     }
 
-    private void newVein(){
+    private void newVein() {
         veins++;
-        if(veins > 2) sendNotify(); // more than 2 veins in less than 10 minutes? sounds suss
+        if (veins > 2) sendNotify(); // more than 2 veins in less than 10 minutes? sounds suss
     }
 
-    private void sendNotify(){
+    private void sendNotify() {
         // Notify staff
         BaseComponent[] component = new ComponentBuilder("[TrackMyMiner] ").color(ChatColor.RED)
                 .append(lastBlock.name() + " has been mined by "

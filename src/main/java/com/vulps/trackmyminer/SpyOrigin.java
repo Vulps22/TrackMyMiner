@@ -5,9 +5,11 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 public class SpyOrigin {
+
     private final GameMode gameMode;
     private Location origin;
     private Player target;
+
     public SpyOrigin(GameMode gamemode, Location origin, Player target) {
         this.gameMode = gamemode;
         this.origin = origin;
@@ -21,9 +23,13 @@ public class SpyOrigin {
     public Location getOrigin() {
         return origin;
     }
-    public Player getTarget(){return target;}
-    public void setTarget(Player Target){
 
+    public Player getTarget() {
+        return target;
+    }
+
+    public void setTarget(Player target) {
+        this.target = target;
     }
 
     public void setOrigin(Location origin) {
