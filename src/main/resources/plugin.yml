@@ -8,7 +8,7 @@ commands:
     description: Your description
     usage: /<command> <world> <x> <y> <z>
     permission: miner.spy
-  mBack:
+  mback:
     description: Your description
     usage: /<command>
     permission: miner.spy

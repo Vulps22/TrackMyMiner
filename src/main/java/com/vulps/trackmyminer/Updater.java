@@ -7,19 +7,16 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import static jdk.xml.internal.SecuritySupport.getClassLoader;
-
 public class Updater {
 
-    private static String url = "https://raw.githubusercontent.com/Vulps22/TrackMyMiner/master/src/main/resources/version.txt";
+    private static final String url = "https://raw.githubusercontent.com/Vulps22/TrackMyMiner/master/src/main/resources/version.txt";
 
     public static boolean shouldUpdate() throws IOException {
 
-            String current = getVersion();
-            String latest = getRemoteVersion();
+        String current = getVersion();
+        String latest = getRemoteVersion();
 
-
-        if (current == null || latest == null) {
+        if (current == null || latest.isEmpty()) {
             return false; // Unable to retrieve version information, skip update check
         }
 
@@ -105,6 +102,7 @@ public class Updater {
         BufferedReader reader = null;
 
         try {
+            // Maybe change to OkHttp?
             URL versionUrl = new URL(url);
             connection = (HttpURLConnection) versionUrl.openConnection();
             connection.setRequestMethod("GET");
@@ -129,11 +127,13 @@ public class Updater {
 
     public static String getVersion() {
         ClassLoader classLoader = Updater.class.getClassLoader();
-        try (InputStream inputStream = classLoader.getResourceAsStream("version.txt");
-             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+        try {
+            InputStream inputStream = classLoader.getResourceAsStream("version.txt");
+            if (inputStream == null) return null;
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
             return reader.readLine();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException exception) {
+            exception.printStackTrace();
         }
         return null;
     }

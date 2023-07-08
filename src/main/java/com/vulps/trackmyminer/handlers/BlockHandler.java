@@ -13,10 +13,12 @@ import org.bukkit.event.block.BlockBreakEvent;
 import java.util.List;
 
 public class BlockHandler implements Listener {
-    List<String> monitoredBlocks;
-    int monitoredLevel;
-    TrackMyMiner plugin;
-    public BlockHandler(TrackMyMiner plugin){
+
+    private List<String> monitoredBlocks;
+    private int monitoredLevel;
+    private final TrackMyMiner plugin;
+
+    public BlockHandler(TrackMyMiner plugin) {
         this.plugin = plugin;
         Bukkit.getPluginManager().registerEvents(this, plugin);
 
@@ -25,18 +27,19 @@ public class BlockHandler implements Listener {
     }
 
     @EventHandler
-    public void onBlockPlace(BlockBreakEvent event){
+    public void onBlockPlace(BlockBreakEvent event) {
         Block block = event.getBlock();
 
         int level = block.getLocation().getBlockY();
-        if(level > monitoredLevel) return; //if the block was broken above the "monitored level" do not track
+        if (level > monitoredLevel) return; //if the block was broken above the "monitored level" do not track
 
         for (String monitoredBlock : monitoredBlocks) {
-            if (block.getType() == Material.getMaterial(monitoredBlock)) {
-                Player player = event.getPlayer();
-                Location location = player.getLocation();
-                plugin.setMined(player, location, block);
-            }
+            if (block.getType() != Material.getMaterial(monitoredBlock)) continue;
+
+            Player player = event.getPlayer();
+            Location location = player.getLocation();
+
+            plugin.setMined(player, location, block);
         }
     }
 }

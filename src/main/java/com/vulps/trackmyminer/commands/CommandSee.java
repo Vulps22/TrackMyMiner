@@ -14,35 +14,37 @@ import javax.sound.midi.Track;
 
 public class CommandSee implements CommandExecutor {
 
-    TrackMyMiner plugin;
+    private final TrackMyMiner plugin;
 
-    public CommandSee(TrackMyMiner plugin){
+    public CommandSee(TrackMyMiner plugin) {
         this.plugin = plugin;
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-       if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player)) {
             sender.sendMessage("This command can only be used by players.");
             return true;
         }
 
         Player executor = (Player) sender;
 
-
-        if (!sender.isOp() && !sender.hasPermission("miner.see")) {
+        if (!sender.hasPermission("miner.see")) {
             sender.sendMessage("You don't have permission to use this command.");
             return true;
         }
 
-        if (args.length < 1) {
+        if (args.length < 1) { // If there isn't an argument (player name).
             TrackMyMiner.log(plugin.isSpying(executor.getPlayer()).toString());
-            if(plugin.isSpying(executor.getPlayer())){
-                Player target = plugin.getSpyOrigin(executor).getTarget();
-                openInventoryGUI(executor, target);
-            }else {
+
+            if (!plugin.isSpying(executor.getPlayer())) { // If sender is not spying on the target.
                 sender.sendMessage("Usage: /mSee <player>");
+                return true;
             }
+
+            Player target = plugin.getSpyOrigin(executor).getTarget(); // View inventory of target.
+            executor.openInventory(target.getInventory());
+
             return true;
         }
 
@@ -54,30 +56,8 @@ public class CommandSee implements CommandExecutor {
             return true;
         }
 
-
-        openInventoryGUI(executor, targetPlayer);
+        executor.openInventory(targetPlayer.getInventory());
 
         return true;
     }
-
-    private void openInventoryGUI(Player player, Player targetPlayer) {
-        TrackMyMiner.log("Getting player inventory of: " + targetPlayer.getName());
-        Inventory targetInventory = targetPlayer.getInventory();
-        Inventory guiInventory = Bukkit.createInventory(null, 54, "Target Inventory: " + targetPlayer.getName());
-
-        // Copy the items from the target player's inventory to the GUI inventory
-        for (int slot = 0; slot < targetInventory.getSize(); slot++) {
-            ItemStack item = targetInventory.getItem(slot);
-            if (item != null) {
-                ItemStack clonedItem = item.clone();
-                ItemMeta itemMeta = clonedItem.getItemMeta();
-                // Modify item meta or perform any additional changes if needed
-                guiInventory.setItem(slot, clonedItem);
-            }
-        }
-
-        // Open the GUI inventory for the player
-        player.openInventory(guiInventory);
-    }
-
 }
